@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "358802374234",
+    "project_id": "frinfoonline",
+    "storage_bucket": "frinfoonline.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358802374234:android:78b852fad7e26e6cef2263",
+        "android_client_info": {
+          "package_name": "com.example.frinfo_online"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbJR9TKmUAuMj5x9zMw38aP-jqXaPUzng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
