@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frinfo_online/auth/login.dart';
 import 'package:frinfo_online/friends/home_screen.dart';
@@ -12,11 +14,13 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Color indicatorColor = Colors.black;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 5), () {
-      removeAndGoNextScreen(context, LoginScreen());
+      //removeAndGoNextScreen(context, LoginScreen());
+      checkUserLoginStatus();
     });
     super.initState();
   }
@@ -74,7 +78,12 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+
+  Future<void> checkUserLoginStatus() async {
+    if (firebaseAuth.currentUser != null) {
+      removeAndGoNextScreen(context, HomeScreen());
+    } else {
+      removeAndGoNextScreen(context, LoginScreen());
+    }
+  }
 }
-
-
-
