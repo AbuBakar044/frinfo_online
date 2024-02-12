@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frinfo_online/auth/login.dart';
+import 'package:frinfo_online/views/auth/login.dart';
 import 'package:frinfo_online/utils/routes.dart';
 
 class CustomDrawer extends StatelessWidget {

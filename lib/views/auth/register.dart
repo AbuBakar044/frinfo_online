@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frinfo_online/friends/home_screen.dart';
+import 'package:frinfo_online/views/friends/home_screen.dart';
 import 'package:frinfo_online/utils/routes.dart';
 
 class SignupScreen extends StatefulWidget {

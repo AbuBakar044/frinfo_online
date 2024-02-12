@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frinfo_online/friends/add_friends_screen.dart';
+import 'package:frinfo_online/views/friends/add_friends_screen.dart';
 import 'package:frinfo_online/utils/colors.dart';
 import 'package:frinfo_online/model/friend_model.dart';
 import 'package:frinfo_online/utils/routes.dart';
-import 'package:frinfo_online/friends/view_friend_screen.dart';
+import 'package:frinfo_online/views/friends/view_friend_screen.dart';
 import 'package:frinfo_online/widgets/custom_drawer.dart';
 
 import 'package:url_launcher/url_launcher.dart';

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:frinfo_online/firebase_options.dart';
-import 'package:frinfo_online/splash/splash_screen.dart';
+import 'package:frinfo_online/views/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
