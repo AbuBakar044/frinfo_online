@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frinfo_online/views/auth/login.dart';
 import 'package:frinfo_online/utils/routes.dart';
+import 'package:get/get.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -27,16 +28,8 @@ class CustomDrawer extends StatelessWidget {
   Future<void> logoutUser(BuildContext context) async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.signOut().then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Logout successfully!"),
-        duration: Duration(
-          seconds: 2,
-        ),
-      ));
-
-      Future.delayed(const Duration(seconds: 3), () {
-        removeAndGoNextScreen(context, LoginScreen());
-      });
+      Get.snackbar('Frinfo', 'Logout Successful');
+      Get.offAll(() => LoginScreen());
     });
   }
 

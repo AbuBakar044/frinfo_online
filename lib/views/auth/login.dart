@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frinfo_online/controllers/login_controller.dart';
 import 'package:frinfo_online/views/auth/register.dart';
 import 'package:frinfo_online/views/friends/home_screen.dart';
 import 'package:frinfo_online/utils/routes.dart';
+import 'package:get/get.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -10,27 +12,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _loginFormKey = GlobalKey<FormState>();
-
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final ctrl = Get.put<LoginController>(LoginController());
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _loginFormKey,
+          key: ctrl.loginFormKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16.0),
               TextFormField(
-                controller: emailController,
+                controller: ctrl.emailController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return "*please add this field";
@@ -54,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 8.0),
               TextFormField(
                 obscureText: true,
-                controller: passwordController,
+                controller: ctrl.passwordController,
                 validator: (value) {
                   if (value!.isEmpty) {
                     return "*please add this field";
@@ -68,9 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-                  if (_loginFormKey.currentState!.validate()) {
-                    loginWithFirebse();
-                  }
+                  ctrl.validateFields();
                 },
                 child: const Text('Login'),
               ),
@@ -88,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Text("Don't have an account?"),
                   TextButton(
                     onPressed: () {
-                      goNextScreen(context, SignupScreen());
+                      Get.to(() => SignupScreen());
                     },
                     child: const Text('Sign Up'),
                   ),
@@ -99,19 +86,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> loginWithFirebse() async {
-    try {
-      firebaseAuth
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
-          .then((value) {
-        emailController.clear();
-        passwordController.clear();
-
-        removeAndGoNextScreen(context, HomeScreen());
-      });
-    } on FirebaseAuthException catch (e) {}
   }
 }
