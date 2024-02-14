@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frinfo_online/controllers/add_friend_controller.dart';
 import 'package:frinfo_online/utils/colors.dart';
 import 'package:frinfo_online/model/friend_model.dart';
 import 'package:frinfo_online/utils/routes.dart';
+import 'package:get/get.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -14,13 +16,7 @@ class AddFriendsScreen extends StatefulWidget {
 }
 
 class _AddFriendsScreenState extends State<AddFriendsScreen> {
-  Uint8List? friendImage;
-  final formKey = GlobalKey<FormState>();
-
-  //Generated controllers to control texts in textformfields
-  final nameController = TextEditingController();
-  final numberController = TextEditingController();
-  final descController = TextEditingController();
+  final addFrndCtrl = Get.put<AddFriendController>(AddFriendController());
 
   @override
   Widget build(BuildContext context) {
@@ -45,104 +41,102 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
         ),
         centerTitle: true,
       ),
-      body: SizedBox(
-        height: MediaQuery.sizeOf(context).height,
-        width: MediaQuery.sizeOf(context).width,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: formKey,
-            child: ListView(
-              children: [
-                InkWell(
-                  onTap: () {
-                    showSheet();
-                  },
-                  child: CircleAvatar(
-                    radius: 65.0,
-                    backgroundColor: Colors.amber,
-                    backgroundImage: friendImage == null
-                        ? const AssetImage('assets/images/logo.jpg')
-                        : MemoryImage(friendImage!) as ImageProvider,
-                  ),
-                ),
-                const SizedBox(
-                  height: 30.0,
-                ),
-                TextFormField(
-                  controller: nameController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return '*please fill this field';
-                    }
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(
-                    hintText: 'Add Name',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                TextFormField(
-                  controller: numberController,
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value!.isEmpty ||
-                        value.length < 11 ||
-                        value.length > 11 ||
-                        !value.startsWith('03')) {
-                      return '*please correctly fill this field';
-                    }
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(), hintText: 'Add Number'),
-                ),
-                const SizedBox(
-                  height: 20.0,
-                ),
-                TextFormField(
-                  maxLines: 10,
-                  controller: descController,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return '*please fill this field';
-                    }
-                  },
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Add Description'),
-                ),
-                const SizedBox(
-                  height: 40.0,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      saveFriendData().then((value) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Form Submitted successfully!')));
-                      });
-                    }
-                  },
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(color: whiteColor),
-                  ),
-                  style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
-                      greenColor,
+      body: GetBuilder<AddFriendController>(builder: (ctrl) {
+        return SizedBox(
+          height: MediaQuery.sizeOf(context).height,
+          width: MediaQuery.sizeOf(context).width,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: addFrndCtrl.formKey,
+              child: ListView(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showSheet();
+                    },
+                    child: CircleAvatar(
+                      radius: 65.0,
+                      backgroundColor: Colors.amber,
+                      backgroundImage: addFrndCtrl.friendImage == null
+                          ? const AssetImage('assets/images/logo.jpg')
+                          : MemoryImage(addFrndCtrl.friendImage!)
+                              as ImageProvider,
                     ),
                   ),
-                )
-              ],
+                  const SizedBox(
+                    height: 30.0,
+                  ),
+                  TextFormField(
+                    controller: addFrndCtrl.nameController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '*please fill this field';
+                      }
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: const InputDecoration(
+                      hintText: 'Add Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  TextFormField(
+                    controller: addFrndCtrl.numberController,
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value!.isEmpty ||
+                          value.length < 11 ||
+                          value.length > 11 ||
+                          !value.startsWith('03')) {
+                        return '*please correctly fill this field';
+                      }
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(), hintText: 'Add Number'),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  TextFormField(
+                    maxLines: 10,
+                    controller: addFrndCtrl.descController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return '*please fill this field';
+                      }
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Add Description'),
+                  ),
+                  const SizedBox(
+                    height: 40.0,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      addFrndCtrl.validateFields();
+                    },
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(color: whiteColor),
+                    ),
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        greenColor,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -178,7 +172,7 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
                           children: [
                             IconButton(
                               onPressed: () {
-                                pickImage(ImageSource.camera);
+                                addFrndCtrl.pickImage(ImageSource.camera);
                               },
                               icon: const Icon(
                                 Icons.camera,
@@ -203,7 +197,7 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
                           children: [
                             IconButton(
                               onPressed: () {
-                                pickImage(ImageSource.gallery);
+                                addFrndCtrl.pickImage(ImageSource.gallery);
                               },
                               icon: const Icon(
                                 Icons.album,
@@ -229,42 +223,5 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
             ),
           );
         });
-  }
-
-  // Future<void> pickImage(ImageSource source) async {
-  //   XFile? choosedImage = await ImagePicker().pickImage(source: source);
-
-  //   if (choosedImage == null) {
-  //     return;
-  //   } else {
-  //     friendImage = await choosedImage.readAsBytes();
-  //     setState(() {});
-
-  //     print('.........................$friendImage');
-  //     removeRoute(context);
-  //   }
-  // }
-
-  Future<void> pickImage(ImageSource source) async {
-    XFile? choosedImage = await ImagePicker().pickImage(source: source);
-
-    if (choosedImage == null) {
-      return;
-    } else {
-      friendImage = await choosedImage.readAsBytes();
-      setState(() {});
-      removeRoute(context);
-    }
-  }
-
-  Future<void> saveFriendData() async {
-    FriendModel friendModel = FriendModel(
-      image: friendImage,
-      name: nameController.text,
-      number: numberController.text,
-      desc: descController.text,
-    );
-
-   
   }
 }
