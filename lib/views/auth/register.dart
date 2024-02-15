@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frinfo_online/controllers/register_controller.dart';
 import 'package:frinfo_online/views/friends/home_screen.dart';
 import 'package:frinfo_online/utils/routes.dart';
+import 'package:get/get.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -9,25 +11,9 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final _regiserFormKey = GlobalKey<FormState>();
-
-  final nameCtrl = TextEditingController();
-  final emailCtrl = TextEditingController();
-  final passCtrl = TextEditingController();
-
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-
-  @override
-  void dispose() {
-    nameCtrl.dispose();
-    emailCtrl.dispose();
-    passCtrl.dispose();
-
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final ctrl = Get.put<RegisterController>(RegisterController());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
@@ -36,7 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Container(
           padding: const EdgeInsets.all(16.0),
           child: Form(
-            key: _regiserFormKey,
+            key: ctrl.regiserFormKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,7 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       return "*please add this field";
                     }
                   },
-                  controller: nameCtrl,
+                  controller: ctrl.nameCtrl,
                   decoration: InputDecoration(
                     hintText: 'Enter your name',
                     labelText: 'Name',
@@ -64,7 +50,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       return "*please add this field";
                     }
                   },
-                  controller: emailCtrl,
+                  controller: ctrl.emailCtrl,
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
                     labelText: 'Email',
@@ -78,7 +64,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       return "*please add this field";
                     }
                   },
-                  controller: passCtrl,
+                  controller: ctrl.passCtrl,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
                     labelText: 'Password',
@@ -87,9 +73,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
-                    if (_regiserFormKey.currentState!.validate()) {
-                      registerWithFirebase();
-                    }
+                    ctrl.validateFields();
                   },
                   child: const Text('Sign Up'),
                 ),
@@ -112,23 +96,5 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> registerWithFirebase() async {
-    try {
-      firebaseAuth
-          .createUserWithEmailAndPassword(
-              email: emailCtrl.text, password: passCtrl.text)
-          .then((value) {
-        nameCtrl.clear();
-        emailCtrl.clear();
-        passCtrl.clear();
-
-        removeAndGoNextScreen(context, HomeScreen());
-      });
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message!)));
-    }
   }
 }
