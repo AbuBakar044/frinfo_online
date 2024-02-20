@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -10,6 +13,9 @@ class AddFriendController extends GetxController {
   final formKey = GlobalKey<FormState>();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  File? imageFile;
+  String friendUrl = '';
 
   //Generated controllers to control texts in textformfields
   final nameController = TextEditingController();
@@ -22,6 +28,7 @@ class AddFriendController extends GetxController {
       return;
     } else {
       friendImage = await tempImage.readAsBytes();
+      imageFile = File(tempImage.path);
       update();
     }
   }
@@ -37,9 +44,13 @@ class AddFriendController extends GetxController {
       'f_name': nameController.text,
       'f_number': numberController.text,
       'f_desc': descController.text,
+      'f_image': friendUrl,
     };
 
-    firebaseFirestore
+    if (imageFile != null) {
+     await saveImage();
+    }
+   await firebaseFirestore
         .collection('users')
         .doc(firebaseAuth.currentUser!.uid)
         .update({
@@ -51,5 +62,15 @@ class AddFriendController extends GetxController {
 
       Get.snackbar('Frinfo', 'Friend saved successfully!');
     });
+  }
+
+  Future<void> saveImage() async {
+    TaskSnapshot imageSnapshot =
+        await firebaseStorage.ref('images').child('img').putFile(imageFile!);
+
+    
+      friendUrl = await imageSnapshot.ref.getDownloadURL();
+      update();
+    
   }
 }
