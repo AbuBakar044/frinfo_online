@@ -48,9 +48,8 @@ class AddFriendController extends GetxController {
     };
 
     if (imageFile != null) {
-     await saveImage();
-    }
-   await firebaseFirestore
+      await saveImage().then((value) {
+         firebaseFirestore
         .collection('users')
         .doc(firebaseAuth.currentUser!.uid)
         .update({
@@ -62,15 +61,36 @@ class AddFriendController extends GetxController {
 
       Get.snackbar('Frinfo', 'Friend saved successfully!');
     });
+      });
+    } else{
+      await firebaseFirestore
+          .collection('users')
+          .doc(firebaseAuth.currentUser!.uid)
+          .update({
+        'friends': FieldValue.arrayUnion([friendData])
+      }).then((value) {
+        nameController.clear();
+        numberController.clear();
+        descController.clear();
+
+        Get.snackbar('Frinfo', 'Friend saved successfully!');
+      });
+    }
+    
   }
 
   Future<void> saveImage() async {
-    TaskSnapshot imageSnapshot =
-        await firebaseStorage.ref('images').child('img').putFile(imageFile!);
+    TaskSnapshot imageSnapshot = await firebaseStorage
+        .ref('images')
+        .child(DateTime.now().toString())
+        .putFile(
+          imageFile!,
+          SettableMetadata(
+            contentType: "jpg",
+          ),
+        );
 
-    
-      friendUrl = await imageSnapshot.ref.getDownloadURL();
-      update();
-    
+    friendUrl = await imageSnapshot.ref.getDownloadURL();
+    update();
   }
 }
