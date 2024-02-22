@@ -20,4 +20,13 @@ class FriendModel {
     this.number,
     this.desc,
   });
+
+  factory FriendModel.fromJson(Map<String, dynamic> json){
+    return FriendModel(
+      //image: json['f_image'],
+      name: json['f_name'],
+      number: json['f_number'],
+      desc: json['f_desc']
+    );
+  }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:frinfo_online/controllers/home_controller.dart';
 import 'package:frinfo_online/views/friends/add_friends_screen.dart';
 import 'package:frinfo_online/utils/colors.dart';
 import 'package:frinfo_online/model/friend_model.dart';
 import 'package:frinfo_online/utils/routes.dart';
 import 'package:frinfo_online/views/friends/view_friend_screen.dart';
 import 'package:frinfo_online/widgets/custom_drawer.dart';
+import 'package:get/get.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,10 +19,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   //An empty friends list
-  List<FriendModel> friendList = [];
 
   @override
   Widget build(BuildContext context) {
+    final homeCtrl = Get.put<HomeController>(HomeController());
     return Scaffold(
         appBar: AppBar(
           backgroundColor: greenColor,
@@ -43,59 +45,61 @@ class _HomeScreenState extends State<HomeScreen> {
             color: whiteColor,
           ),
         ),
-        body: friendList.isEmpty
-            ? const Center(
-                child: Text(
-                  "You don't have any friends\npress (+) button to add one!",
-                  textAlign: TextAlign.center,
-                ),
-              )
-            : ListView.builder(
-                itemCount: friendList.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      tileColor: Colors.green,
-                      onTap: () {
-                        goNextScreen(
-                            context,
-                            ViewFriendScreen(
-                                friendName: friendList[index].name!,
-                                friendNumber: friendList[index].number!,
-                                friendDesc: friendList[index].desc!,
-                                friendImage: friendList[index].image!));
-                      },
-                      onLongPress: () {
-                        callMyFriend(friendList[index].number!);
-                      },
-                      leading: CircleAvatar(
-                        backgroundImage: MemoryImage(friendList[index].image!),
-                      ),
-                      title: Text(
-                        friendList[index].name!,
-                        style: const TextStyle(
-                          color: whiteColor,
-                        ),
-                      ),
-                      subtitle: Text(
-                        friendList[index].number!,
-                        style: const TextStyle(
-                          color: whiteColor,
-                        ),
-                      ),
-                      trailing: IconButton(
-                          onPressed: () {
-                            deleteFriend(index);
-                          },
-                          icon: const Icon(
-                            Icons.delete,
+        body: GetBuilder<HomeController>(builder: (ctrl) {
+          return ctrl.friendsList.isEmpty
+              ? const Center(
+                  child: Text(
+                    "You don't have any friends\npress (+) button to add one!",
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: ctrl.friendsList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        tileColor: Colors.green,
+                        onTap: () {
+                          // goNextScreen(
+                          //     context,
+                          //     ViewFriendScreen(
+                          //         friendName: friendList[index].name!,
+                          //         friendNumber: friendList[index].number!,
+                          //         friendDesc: friendList[index].desc!,
+                          //         friendImage: friendList[index].image!));
+                        },
+                        // onLongPress: () {
+                        //   callMyFriend(friendList[index].number!);
+                        // },
+                        // leading: CircleAvatar(
+                        //   backgroundImage: MemoryImage(friendList[index].image!),
+                        // ),
+                        title: Text(
+                          ctrl.friendsList[index].name!,
+                          style: const TextStyle(
                             color: whiteColor,
-                          )),
-                    ),
-                  );
-                },
-              ));
+                          ),
+                        ),
+                        subtitle: Text(
+                          ctrl.friendsList[index].number!,
+                          style: const TextStyle(
+                            color: whiteColor,
+                          ),
+                        ),
+                        trailing: IconButton(
+                            onPressed: () {
+                             // deleteFriend(index);
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: whiteColor,
+                            )),
+                      ),
+                    );
+                  },
+                );
+        }));
   }
 
   // //Function to get friends from Hive Database
@@ -109,15 +113,15 @@ class _HomeScreenState extends State<HomeScreen> {
   //   setState(() {});
   // }
 
-  Future<void> deleteFriend(int index) async {
-    friendList.removeAt(index);
-    //await friendsBox!.deleteAt(index);
-    setState(() {});
-  }
+  // Future<void> deleteFriend(int index) async {
+  //   friendList.removeAt(index);
+  //   //await friendsBox!.deleteAt(index);
+  //   setState(() {});
+  // }
 
-  Future<void> callMyFriend(String number) async {
-    if (!await launchUrl(Uri.parse('tel:$number'))) {
-      throw Exception('Could not launch');
-    }
-  }
+  // Future<void> callMyFriend(String number) async {
+  //   if (!await launchUrl(Uri.parse('tel:$number'))) {
+  //     throw Exception('Could not launch');
+  //   }
+  // }
 }

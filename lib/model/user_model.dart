@@ -4,13 +4,21 @@ import 'package:frinfo_online/model/friend_model.dart';
 class UserModel {
   String? userEmail;
   String? userName;
-  List<FriendModel>? userFriends;
+  List<dynamic>? userFriends;
 
   UserModel({this.userEmail, this.userFriends, this.userName});
 
   factory UserModel.fromDocumentsSnapshot(DocumentSnapshot snapshot) {
     return UserModel(
-      
+      userEmail: snapshot.data().toString().contains('email')
+          ? snapshot.get('email')
+          : '',
+      userName: snapshot.data().toString().contains('name')
+          ? snapshot.get('name')
+          : '',
+      userFriends: snapshot.data().toString().contains('friends')
+          ? snapshot.get('friends')
+          : [],
     );
   }
 }
