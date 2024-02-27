@@ -8,7 +8,7 @@ class UserModel {
 
   UserModel({this.userEmail, this.userFriends, this.userName});
 
-  factory UserModel.fromDocumentsSnapshot(DocumentSnapshot snapshot) {
+  factory UserModel.fromDocumentsSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return UserModel(
       userEmail: snapshot.data().toString().contains('email')
           ? snapshot.get('email')

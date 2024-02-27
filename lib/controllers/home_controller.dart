@@ -8,29 +8,30 @@ class HomeController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   UserModel userModel = UserModel();
-  List<FriendModel> friendsList = [];
+  
 
   @override
   void onInit() {
-    getFriendsData();
+   // getFriendsData();
     super.onInit();
   }
 
-  Future<void> getFriendsData() async {
-    DocumentSnapshot userData = await firebaseFirestore
-        .collection('users')
-        .doc(firebaseAuth.currentUser!.uid)
-        .get();
+  // Stream<void> getFriendsData() async* {
+  //   DocumentSnapshot userData = await firebaseFirestore
+  //       .collection('users')
+  //       .doc(firebaseAuth.currentUser!.uid)
+  //       .get();
 
-    userModel = UserModel.fromDocumentsSnapshot(userData);
-    friendsList = userModel.userFriends!
-        .map((data) => FriendModel.fromJson(data))
-        .toList();
+  //   userModel = UserModel.fromDocumentsSnapshot(userData);
+  //   friendsList = userModel.userFriends!
+  //       .map((data) => FriendModel.fromJson(data))
+  //       .toList();
+    
+  //   yield friendsList;
+  //   //update();
 
-    update();
+  //   print('......................${userModel.userEmail}');
 
-    print('......................${userModel.userEmail}');
-
-    print('.........................${friendsList[0].name}');
-  }
+  //   print('.........................${friendsList[0].name}');
+  // }
 }

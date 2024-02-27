@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frinfo_online/controllers/home_controller.dart';
+import 'package:frinfo_online/model/user_model.dart';
 import 'package:frinfo_online/views/friends/add_friends_screen.dart';
 import 'package:frinfo_online/utils/colors.dart';
 import 'package:frinfo_online/model/friend_model.dart';
@@ -19,6 +22,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   //An empty friends list
+  List<FriendModel> friendsList = [];
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,59 +51,75 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body: GetBuilder<HomeController>(builder: (ctrl) {
-          return ctrl.friendsList.isEmpty
-              ? const Center(
-                  child: Text(
-                    "You don't have any friends\npress (+) button to add one!",
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: ctrl.friendsList.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        tileColor: Colors.green,
-                        onTap: () {
-                          // goNextScreen(
-                          //     context,
-                          //     ViewFriendScreen(
-                          //         friendName: friendList[index].name!,
-                          //         friendNumber: friendList[index].number!,
-                          //         friendDesc: friendList[index].desc!,
-                          //         friendImage: friendList[index].image!));
-                        },
-                        // onLongPress: () {
-                        //   callMyFriend(friendList[index].number!);
-                        // },
-                        // leading: CircleAvatar(
-                        //   backgroundImage: MemoryImage(friendList[index].image!),
-                        // ),
-                        title: Text(
-                          ctrl.friendsList[index].name!,
-                          style: const TextStyle(
-                            color: whiteColor,
-                          ),
-                        ),
-                        subtitle: Text(
-                          ctrl.friendsList[index].number!,
-                          style: const TextStyle(
-                            color: whiteColor,
-                          ),
-                        ),
-                        trailing: IconButton(
-                            onPressed: () {
-                             // deleteFriend(index);
-                            },
-                            icon: const Icon(
-                              Icons.delete,
+          return StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: Text('No Friends Found'),
+                  );
+                } else {
+                  var data = snapshot.data;
+                  UserModel userModel = UserModel.fromDocumentsSnapshot(data!);
+                  friendsList = userModel.userFriends!
+                      .map((data) => FriendModel.fromJson(data))
+                      .toList();
+                  return ListView.builder(
+                    itemCount: friendsList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          tileColor: Colors.green,
+                          onTap: () {
+                            // goNextScreen(
+                            //     context,
+                            //     ViewFriendScreen(
+                            //         friendName: friendList[index].name!,
+                            //         friendNumber: friendList[index].number!,
+                            //         friendDesc: friendList[index].desc!,
+                            //         friendImage: friendList[index].image!));
+                          },
+                          // onLongPress: () {
+                          //   callMyFriend(friendList[index].number!);
+                          // },
+                          // leading: CircleAvatar(
+                          //   backgroundImage: MemoryImage(friendList[index].image!),
+                          // ),
+                          title: Text(
+                            friendsList[index].name!,
+                            style: const TextStyle(
                               color: whiteColor,
-                            )),
-                      ),
-                    );
-                  },
-                );
+                            ),
+                          ),
+                          subtitle: Text(
+                            friendsList[index].number!,
+                            style: const TextStyle(
+                              color: whiteColor,
+                            ),
+                          ),
+                          trailing: IconButton(
+                              onPressed: () {
+                                // deleteFriend(index);
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: whiteColor,
+                              )),
+                        ),
+                      );
+                    },
+                  );
+                }
+              });
         }));
   }
 
