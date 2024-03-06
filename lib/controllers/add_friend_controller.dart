@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,6 +17,7 @@ class AddFriendController extends GetxController {
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   File? imageFile;
   String friendUrl = '';
+  String imageName = '';
 
   //Generated controllers to control texts in textformfields
   final nameController = TextEditingController();
@@ -40,46 +42,65 @@ class AddFriendController extends GetxController {
   }
 
   Future<void> saveFriend() async {
-    Map<String, dynamic> friendData = {
-      'f_name': nameController.text,
-      'f_number': numberController.text,
-      'f_desc': descController.text,
-      'f_image': friendUrl,
-    };
+    EasyLoading.show(status: 'Loading...');
+    // Map<String, dynamic> friendData = {
+    //   'f_name': nameController.text,
+    //   'f_number': numberController.text,
+    //   'f_desc': descController.text,
+    //   'f_image': friendUrl,
+    // };
 
     if (imageFile != null) {
       await saveImage().then((value) {
-         firebaseFirestore
-        .collection('users')
-        .doc(firebaseAuth.currentUser!.uid)
-        .update({
-      'friends': FieldValue.arrayUnion([friendData])
-    }).then((value) {
-      nameController.clear();
-      numberController.clear();
-      descController.clear();
+        firebaseFirestore
+            .collection('users')
+            .doc(firebaseAuth.currentUser!.uid)
+            .update({
+          'friends': FieldValue.arrayUnion([
+            {
+              'f_name': nameController.text,
+              'f_number': numberController.text,
+              'f_desc': descController.text,
+              'f_image': value,
+              'f_image_name': imageName,
+            }
+          ])
+        }).then((value) {
+          nameController.clear();
+          numberController.clear();
+          descController.clear();
 
-      Get.snackbar('Frinfo', 'Friend saved successfully!');
-    });
+          Get.snackbar('Frinfo', 'Friend saved successfully!');
+          EasyLoading.dismiss();
+        });
       });
-    } else{
+    } else {
+      print('.......................Saving without Image');
       await firebaseFirestore
           .collection('users')
           .doc(firebaseAuth.currentUser!.uid)
           .update({
-        'friends': FieldValue.arrayUnion([friendData])
+        'friends': FieldValue.arrayUnion([
+          {
+            'f_name': nameController.text,
+            'f_number': numberController.text,
+            'f_desc': descController.text,
+            'f_image': "",
+          }
+        ])
       }).then((value) {
         nameController.clear();
         numberController.clear();
         descController.clear();
 
         Get.snackbar('Frinfo', 'Friend saved successfully!');
+        EasyLoading.dismiss();
       });
     }
-    
   }
 
-  Future<void> saveImage() async {
+  Future<String> saveImage() async {
+    print('.......................Saving Image');
     TaskSnapshot imageSnapshot = await firebaseStorage
         .ref('images')
         .child(DateTime.now().toString())
@@ -91,6 +112,10 @@ class AddFriendController extends GetxController {
         );
 
     friendUrl = await imageSnapshot.ref.getDownloadURL();
+    imageName = imageSnapshot.ref.name;
+    print('.......................This is image name $imageName');
     update();
+
+    return friendUrl;
   }
 }

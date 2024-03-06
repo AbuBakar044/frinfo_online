@@ -8,11 +8,10 @@ class HomeController extends GetxController {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   UserModel userModel = UserModel();
-  
 
   @override
   void onInit() {
-   // getFriendsData();
+    // getFriendsData();
     super.onInit();
   }
 
@@ -26,7 +25,7 @@ class HomeController extends GetxController {
   //   friendsList = userModel.userFriends!
   //       .map((data) => FriendModel.fromJson(data))
   //       .toList();
-    
+
   //   yield friendsList;
   //   //update();
 
@@ -34,4 +33,5 @@ class HomeController extends GetxController {
 
   //   print('.........................${friendsList[0].name}');
   // }
+
 }

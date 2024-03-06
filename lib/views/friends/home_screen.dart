@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:frinfo_online/controllers/home_controller.dart';
 import 'package:frinfo_online/model/user_model.dart';
 import 'package:frinfo_online/views/friends/add_friends_screen.dart';
@@ -23,7 +24,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   //An empty friends list
   List<FriendModel> friendsList = [];
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +58,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
+                  EasyLoading.show(status: 'Loading...');
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.transparent,
+                      color: Colors.transparent,
+                    ),
                   );
                 }
                 if (!snapshot.hasData) {
@@ -67,11 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text('No Friends Found'),
                   );
                 } else {
+                  EasyLoading.dismiss();
                   var data = snapshot.data;
                   UserModel userModel = UserModel.fromDocumentsSnapshot(data!);
                   friendsList = userModel.userFriends!
                       .map((data) => FriendModel.fromJson(data))
                       .toList();
+
+                 
                   return ListView.builder(
                     itemCount: friendsList.length,
                     itemBuilder: (context, index) {
@@ -91,9 +98,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           // onLongPress: () {
                           //   callMyFriend(friendList[index].number!);
                           // },
-                          // leading: CircleAvatar(
-                          //   backgroundImage: MemoryImage(friendList[index].image!),
-                          // ),
+                          leading: CircleAvatar(
+                            backgroundImage: friendsList[index].image == null ||
+                                    friendsList[index].image!.isEmpty
+                                ? const AssetImage('assets/images/logo.jpg')
+                                : NetworkImage(friendsList[index].image!)
+                                    as ImageProvider,
+                          ),
                           title: Text(
                             friendsList[index].name!,
                             style: const TextStyle(
