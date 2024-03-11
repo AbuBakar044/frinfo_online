@@ -27,4 +27,14 @@ class FriendModel {
         desc: json['f_desc'],
         imageName: json['f_image_name']);
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['f_image'] = image;
+    data['f_name'] = name;
+    data['f_number'] = number;
+    data['f_desc'] = desc;
+    data['f_image_name'] = imageName;
+    return data;
+  }
 }

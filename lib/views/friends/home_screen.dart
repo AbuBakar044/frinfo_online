@@ -78,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       .map((data) => FriendModel.fromJson(data))
                       .toList();
 
-                 
                   return ListView.builder(
                     itemCount: friendsList.length,
                     itemBuilder: (context, index) {
@@ -119,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           trailing: IconButton(
                               onPressed: () {
-                                // deleteFriend(index);
+                                deleteFriend(index);
                               },
                               icon: const Icon(
                                 Icons.delete,
@@ -145,11 +144,19 @@ class _HomeScreenState extends State<HomeScreen> {
   //   setState(() {});
   // }
 
-  // Future<void> deleteFriend(int index) async {
-  //   friendList.removeAt(index);
-  //   //await friendsBox!.deleteAt(index);
-  //   setState(() {});
-  // }
+  Future<void> deleteFriend(int index) async {
+    EasyLoading.show(status: 'Deleting...');
+    friendsList.removeAt(index);
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update(
+            {'friends': friendsList.map((friend) => friend.toJson()).toList()});
+    //await friendsBox!.deleteAt(index);
+    EasyLoading.dismiss();
+    setState(() {});
+  }
 
   // Future<void> callMyFriend(String number) async {
   //   if (!await launchUrl(Uri.parse('tel:$number'))) {
